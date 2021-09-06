@@ -1,0 +1,44 @@
+﻿@using OnlineShopBlazorWasm.Data 
+@using System.Web
+@inject HttpClient HttpClient
+
+<div class="card">
+    <div class="card-title">
+        @Product.Name
+    </div>
+    <div class="card-body">
+        @Product.Description
+    </div>
+
+    <div class="card-footer">
+        @if (IsAddedToCart)
+        {
+            <div>Added to cart</div>
+        }
+        else if(ShowBuyButton)
+        {
+            <button class="btn btn-primary" @onclick="Buy">Buy</button>
+        }
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public Product Product { get; set; }
+    [Parameter]
+    public bool ShowBuyButton { get; set; }
+    private bool IsAddedToCart { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsAddedToCart = await HttpClient.GetFromJsonAsync<bool>($"api/Cart/IsItemInCart?id={Product.Id}");
+    }
+
+    private async Task Buy()
+    {
+        await HttpClient.PostAsync("api/Cart/AddToCart", JsonContent.Create<Guid>(Product.Id));
+        IsAddedToCart = true;
+    }
+}

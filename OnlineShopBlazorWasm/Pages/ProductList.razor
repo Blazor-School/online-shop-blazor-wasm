@@ -1,0 +1,18 @@
+﻿@using OnlineShopBlazorWasm.Data
+@page "/product-list"
+@inject HttpClient HttpClient
+
+@foreach (var product in Products)
+{
+    <ProductDetail Product="product" ShowBuyButton="true"></ProductDetail>
+}
+<NavLink href="check-out">Check-out</NavLink>
+
+@code {
+    private List<Product> Products { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Products = await HttpClient.GetFromJsonAsync<List<Product>>("api/Product/GetAllProducts");
+    }
+}
