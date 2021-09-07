@@ -32,5 +32,14 @@ namespace OnlineShopApi.Controllers
 
             return Ok(result);
         }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetCartItems()
+        {
+            var result = _cartService.GetProductsInCart();
+
+            return Ok(result);
+        }
     }
 }
