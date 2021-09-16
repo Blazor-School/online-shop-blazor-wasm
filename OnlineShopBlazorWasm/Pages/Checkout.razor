@@ -1,6 +1,7 @@
 ﻿@page "/check-out"
 @inject HttpClient HttpClient
 @inject IJSRuntime JsRuntime
+@using System.Net
 
 <div>Products in cart:</div>
 <div class="d-flex flex-column">
@@ -40,6 +41,12 @@
 
     private async Task SubmitAsync()
     {
-        await JsRuntime.InvokeVoidAsync("alert", $"Thank you {CheckoutInfo.Name}, we will deliver to {CheckoutInfo.Address}.");
+        var response = await HttpClient.PostAsJsonAsync<CheckoutInfo>("api/Checkout/Checkout", CheckoutInfo);
+        string message = await response.Content.ReadAsStringAsync();
+
+        if (response.StatusCode is HttpStatusCode.OK)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", message);
+        }
     }
 }
